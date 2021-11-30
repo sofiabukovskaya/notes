@@ -2,9 +2,36 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/search"
+        android:orderInCategory="100"
+        android:title="Button title"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_baseline_search_24" />
+    <item
         android:id="@+id/action_add"
         android:orderInCategory="100"
         android:title="Button title"
         app:showAsAction="always"
         android:icon="@drawable/ic_baseline_add_24" />
+    <item
+        android:id="@+id/action_filter"
+        android:title="Filter by importance">
+        <menu>
+            <item
+                android:id="@+id/action_filter_first_class"
+                android:title="A"
+                android:checkable="true"/>
+            <item
+                android:id="@+id/action_filter_second_class"
+                android:title="B"
+                android:checkable="true"/>
+
+            <item
+                android:id="@+id/action_filter_third_class"
+                android:title="C"
+                android:checkable="true"/>
+
+        </menu>
+
+    </item>
 </menu>

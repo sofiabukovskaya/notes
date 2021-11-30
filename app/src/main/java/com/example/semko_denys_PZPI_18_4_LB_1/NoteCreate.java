@@ -51,8 +51,9 @@ public class NoteCreate extends AppCompatActivity {
         notes = (ArrayList<Note>)getIntent().getSerializableExtra("arrayList");
 
         selectImage();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss ", Locale.ENGLISH);
         String currentTime = sdf.format(new Date());
+
         addNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

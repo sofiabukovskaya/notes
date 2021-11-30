@@ -1,6 +1,8 @@
 package com.example.semko_denys_PZPI_18_4_LB_1;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder>{
     @Override
     public NotesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.notes_row, parent, false);
+
         return new ViewHolder(view);
     }
 
@@ -49,13 +52,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder>{
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final ImageView imageView;
         final TextView title, description, date, important;
-        ViewHolder(View view){
+
+          ViewHolder(View view){
             super(view);
             imageView = view.findViewById(R.id.imageView);
             title = view.findViewById(R.id.textView);
             description = view.findViewById(R.id.textView3);
             date = view.findViewById(R.id.textView2);
             important = view.findViewById(R.id.textView4);
+            view.setOnCreateContextMenuListener((View.OnCreateContextMenuListener) this);
         }
 
         void bindData (Note note) {
