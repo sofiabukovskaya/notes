@@ -10,6 +10,7 @@
         android:id="@+id/notesText"
         android:layout_width="415dp"
         android:layout_height="57dp"
+        android:paddingLeft="7dp"
         android:fontFamily="@font/amaranth_bold"
         android:text="Notes :)"
         android:textSize="30sp"
@@ -20,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.023" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notes_list"
         android:layout_width="419dp"
         android:layout_height="654dp"
@@ -28,4 +29,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/notesText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

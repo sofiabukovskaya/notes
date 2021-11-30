@@ -1,21 +1,24 @@
 package com.example.semko_denys_PZPI_18_4_LB_1.data;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Note {
+public class Note implements Serializable {
     private String title;
     private String description;
     private String time;
     private String importance;
 
-
-    public Note() {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-        String currentTime = sdf.format(new Date());
-        this.time = currentTime;
+    public Note(String title, String description, String time, String importance, String icon) {
+        this.title = title;
+        this.description = description;
+        this.time = time;
+        this.importance = importance;
+        this.icon = icon;
     }
+
 
     public String getTitle() {
         return title;
