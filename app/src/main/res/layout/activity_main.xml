@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/notesText"
+        android:id="@+id/editNote"
         android:layout_width="415dp"
         android:layout_height="57dp"
         android:paddingLeft="7dp"
         android:fontFamily="@font/amaranth_bold"
-        android:text="Notes :)"
+        android:text="@string/notes_title"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,6 +29,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/notesText" />
+        app:layout_constraintTop_toBottomOf="@+id/editNote" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

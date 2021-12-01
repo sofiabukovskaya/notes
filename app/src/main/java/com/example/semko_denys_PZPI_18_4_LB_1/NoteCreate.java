@@ -14,12 +14,9 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,8 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class NoteCreate extends AppCompatActivity {
-
-        List<Note> notes;
+     List<Note> notes;
 
      ImageView imageNote;
      EditText textNote;
@@ -41,10 +37,10 @@ public class NoteCreate extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_create);
-        imageNote = findViewById(R.id.imageView2);
-        textNote = findViewById(R.id.title_tiet);
-        descriptionNote = findViewById(R.id.descripton);
-        addNoteButton = findViewById(R.id.button_add_note);
+        imageNote = findViewById(R.id.imageEditNote);
+        textNote = findViewById(R.id.title_edit);
+        descriptionNote = findViewById(R.id.title_desc_edit);
+        addNoteButton = findViewById(R.id.button_edit_note);
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.semko_pzpi_18_4_LB_1", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -111,20 +107,20 @@ public class NoteCreate extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void onRadioButtonClicked(View view) {
+    public void onRadioButtonClickedCreate(View view) {
         boolean checked = ((RadioButton) view).isChecked();
         switch(view.getId()) {
-            case R.id.a_priority:
+            case R.id.a_priority_create:
                 if (checked){
                         priority = "A";
                 }
                 break;
-            case R.id.b_priority:
+            case R.id.b_priority_create:
                 if (checked){
                     priority = "B";
                 }
                 break;
-            case R.id.c_priority:
+            case R.id.c_priority_create:
                 if (checked){
                     priority = "C";
                 }

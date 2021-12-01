@@ -11,13 +11,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView noteImage;
 
      ArrayList<Note> noteList;
+    NotesAdapter adapter;
 
 
     SharedPreferences sharedPreferences;
@@ -59,73 +64,155 @@ public class MainActivity extends AppCompatActivity {
         noteImage = findViewById(R.id.imageView);
 
         noteList = new ArrayList<>();
-        String serializedObject = sharedPreferences.getString("com.example.semko_pzpi_18_4_LB_1", null);
-        if (serializedObject != null) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Note>>(){}.getType();
-            noteList = gson.fromJson(serializedObject, type);
-        }
 
-         notesListView = findViewById(R.id.notes_list);
+        getDataFromSharedPref();
+
+        notesListView = findViewById(R.id.notes_list);
         notesListView.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         notesListView.setLayoutManager(linearLayoutManager);
 
-        NotesAdapter adapter = new NotesAdapter(this, noteList);
+         adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
+             @Override
+             public void onLongClick(View itemView, int position) {
+                 itemView.setOnCreateContextMenuListener(new ContextMenuRecyclerView(position));
+             }
+         });
         notesListView.setAdapter(adapter);
-//        arrayAdapter = new ArrayAdapter(getApplicationContext(), R.layout.notes_row,  noteList);
-//        notesListView.setAdapter(arrayAdapter);
-
-//        notesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(getApplicationContext(), NoteEdit.class);
-//                intent.putExtra("note_id", i);
-//                startActivity(intent);
-//            }
-//        });
-//
-//        notesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                new AlertDialog.Builder(MainActivity.this)
-//                        .setIcon(android.R.drawable.ic_dialog_alert)
-//                        .setTitle("Are you sure?")
-//                        .setMessage("Do you want to delete this note?")
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                noteList.remove(i);
-//                                arrayAdapter.notifyDataSetChanged();
-//
-//                                HashSet<String> set = new HashSet(MainActivity.noteList);
-//                                sharedPreferences.edit().putStringSet("notes", set).apply();
-//                            }
-//                        }).setNegativeButton("No", null).show();
-//                return true;
-//            }
-//        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
+
+        MenuItem menuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setIconifiedByDefault(false);
+        searchView.setQueryHint(getString(R.string.search));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapter.getFilter().filter(s);
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    public void getDataFromSharedPref() {
+        String serializedObject = sharedPreferences.getString("com.example.semko_pzpi_18_4_LB_1", null);
+        if (serializedObject != null) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Note>>(){}.getType();
+            noteList = gson.fromJson(serializedObject, type);
+        }
+    }
+
+    public void openEditActivity(Note note, int position){
+        Intent intent = new Intent(this, NoteEdit.class);
+        intent.putExtra("note", note);
+        intent.putExtra("arrayList", noteList);
+        intent.putExtra("index", position);
+        startActivity(intent);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                Intent intent = new Intent(MainActivity.this, NoteCreate.class);
+                intent.putExtra("arrayList", noteList);
+                startActivity(intent);
+                break;
+            case R.id.action_filter_a:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                    getDataFromSharedPref();
+                    adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
+                        @Override
+                        public void onLongClick(View itemView, int position) {
+                            itemView.setOnCreateContextMenuListener(new ContextMenuRecyclerView(position));
+                        }
+                    });
+                    notesListView.setAdapter(adapter);
+                } else {
+                    item.setChecked(true);
+                    adapter.filterNotes("A");
+                }
+                break;
+            case R.id.action_filter_b:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                    getDataFromSharedPref();
+                    adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
+                        @Override
+                        public void onLongClick(View itemView, int position) {
+                            itemView.setOnCreateContextMenuListener(new ContextMenuRecyclerView(position));
+                        }
+                    });
+                    notesListView.setAdapter(adapter);
+                } else {
+                    item.setChecked(true);
+                    adapter.filterNotes("B");
+                }
+                break;
+            case R.id.action_filter_c:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                    getDataFromSharedPref();
+                    adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
+                        @Override
+                        public void onLongClick(View itemView, int position) {
+                            itemView.setOnCreateContextMenuListener(new ContextMenuRecyclerView(position));
+                        }
+                    });
+                    notesListView.setAdapter(adapter);
+                } else {
+                    item.setChecked(true);
+                    adapter.filterNotes("C");
+                }
+                break;
 
-        if (id == R.id.action_add) {
-            Intent intent = new Intent(MainActivity.this, NoteCreate.class);
-            intent.putExtra("arrayList", noteList);
-            startActivity(intent);
-            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public class ContextMenuRecyclerView implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+        private int position;
+
+        ContextMenuRecyclerView(int position) {
+            this.position = position;
         }
 
-        return super.onOptionsItemSelected(item);
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            MenuInflater menuInflater = MainActivity.this.getMenuInflater();
+            menuInflater.inflate(R.menu.menu_edit_note, menu);
+            for (int index = 0; index < menu.size(); ++index) {
+                menu.getItem(index).setOnMenuItemClickListener(this);
+            }
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_edit:
+                    openEditActivity(noteList.get(position), position);
+                    break;
+                case R.id.action_remove:
+                    adapter.removeNote(position, editor);
+                    break;
+            }
+            return false;
+        }
     }
 }

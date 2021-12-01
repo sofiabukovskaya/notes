@@ -3,10 +3,13 @@ package com.example.semko_denys_PZPI_18_4_LB_1;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,19 +17,30 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder>{
+public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> implements Filterable {
+    public interface LongClickByItemListener {
+        void onLongClick(View itemView, int position);
+    }
+
       LayoutInflater inflater;
       List<Note> notesList = new ArrayList<>();
+      List<Note> searchNotesList;
 
 
-    NotesAdapter(Context context, ArrayList<Note> notes) {
+
+     LongClickByItemListener longClickByItemListener;
+
+    NotesAdapter(Context context, ArrayList<Note> notes, LongClickByItemListener longClickByItemListener) {
         this.notesList = notes;
         this.inflater = LayoutInflater.from(context);
+        this.searchNotesList = new ArrayList<>(notes);
+        this.longClickByItemListener = longClickByItemListener;
     }
     @NonNull
     @Override
@@ -49,7 +63,61 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder>{
         return notesList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public Filter getFilter() {
+        return notesFilter;
+    }
+
+    private Filter notesFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<Note> filteringList = new ArrayList<>();
+            if(charSequence == null || charSequence.length() == 0) {
+                filteringList.addAll(searchNotesList);
+            } else {
+                String filteringPattern = charSequence.toString().toLowerCase().trim();
+                for(Note note : searchNotesList) {
+                        if(note.getDescription().toLowerCase().contains(filteringPattern)) {
+                            filteringList.add(note);
+                        }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteringList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            notesList.clear();
+            notesList.addAll((List) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
+
+     void filterNotes(String filerImportant) {
+         searchNotesList.clear();
+        for (Note note : notesList) {
+            if (note.getImportance().contains(filerImportant)) {
+                searchNotesList.add(note);
+            }
+        }
+        notesList.clear();
+        notesList.addAll(searchNotesList);
+        notifyDataSetChanged();
+    }
+
+    public void removeNote(int position, SharedPreferences.Editor editor) {
+         editor.clear();
+        notesList.remove(position);
+        Gson gson = new Gson();
+        String json = gson.toJson(notesList);
+        editor.putString("com.example.semko_pzpi_18_4_LB_1", json);
+        editor.commit();
+        notifyItemRemoved(position);
+    }
+
+    public  class ViewHolder extends RecyclerView.ViewHolder {
         final ImageView imageView;
         final TextView title, description, date, important;
 
@@ -60,7 +128,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder>{
             description = view.findViewById(R.id.textView3);
             date = view.findViewById(R.id.textView2);
             important = view.findViewById(R.id.textView4);
-            view.setOnCreateContextMenuListener((View.OnCreateContextMenuListener) this);
+
+              view.setOnLongClickListener(new View.OnLongClickListener() {
+                  @Override
+                  public boolean onLongClick(View v) {
+                      longClickByItemListener.onLongClick(v, getAdapterPosition());
+                      return false;
+                  }
+              });
         }
 
         void bindData (Note note) {

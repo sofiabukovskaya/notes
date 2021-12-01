@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Semko_Denys</string>
+    <string name="notes_title">Замітки :)</string>
+    <string name="title">Заголовок</string>
+    <string name="desc">Текст замітки</string>
+    <string name="priority">Оберіть ступінь важливості замітки:</string>
+    <string name="add">Додати замітку</string>
+    <string name="filtr">Фільтрувати за важлівистю</string>
+    <string name="search">За текстом замітки</string>
+    <string name="delete">Видалити</string>
+    <string name="edit">Редагувати</string>
+    <string name="edit_title">Змінити замітку</string>
+</resources>

@@ -6,4 +6,124 @@
     android:layout_height="match_parent"
     tools:context=".NoteEdit">
 
+    <TextView
+        android:id="@+id/editNote"
+        android:layout_width="415dp"
+        android:layout_height="57dp"
+        android:fontFamily="@font/amaranth_bold"
+        android:paddingLeft="7dp"
+        android:text="@string/edit_title"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.002" />
+
+    <ImageView
+        android:id="@+id/imageEditNote"
+        android:layout_width="129dp"
+        android:layout_height="115dp"
+        android:src="@drawable/ic_baseline_add_photo_alternate_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.112" />
+
+    <EditText
+        android:id="@+id/title_edit"
+        android:layout_width="402dp"
+        android:layout_height="43dp"
+        android:background="@drawable/border"
+        android:hint="@string/title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.29" />
+
+    <EditText
+        android:id="@+id/title_desc_edit"
+        android:layout_width="412dp"
+        android:layout_height="84dp"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/border"
+        android:hint="@string/desc"
+        android:inputType="textMultiLine"
+        android:padding="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_edit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <RadioGroup
+        android:id="@+id/classes_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_desc_edit">
+
+        <RadioButton
+            android:id="@+id/a_priority_edit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:checked="true"
+            android:padding="10dp"
+            android:onClick="onRadioButtonClicked"
+            android:text="A" />
+
+        <RadioButton
+            android:id="@+id/b_priority_edit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onRadioButtonClicked"
+            android:padding="10dp"
+            android:text="B" />
+
+        <RadioButton
+            android:id="@+id/c_priority_edit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onRadioButtonClicked"
+            android:padding="10dp"
+            android:text="C" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/priority_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginBottom="18dp"
+        android:text="@string/priority"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/classes_rg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_desc_edit"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/button_edit_note"
+        android:layout_width="151dp"
+        android:layout_height="62dp"
+        android:text="@string/edit_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.956" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

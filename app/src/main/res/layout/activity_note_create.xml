@@ -7,7 +7,7 @@
     tools:context=".NoteCreate">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imageEditNote"
         android:layout_width="129dp"
         android:layout_height="115dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,11 +19,11 @@
 
 
     <EditText
-        android:id="@+id/title_tiet"
+        android:id="@+id/title_edit"
         android:layout_width="402dp"
         android:layout_height="43dp"
         android:background="@drawable/border"
-        android:hint="Title"
+        android:hint="@string/title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.444"
@@ -32,19 +32,19 @@
         app:layout_constraintVertical_bias="0.29" />
 
     <EditText
-        android:id="@+id/descripton"
+        android:id="@+id/title_desc_edit"
         android:layout_width="412dp"
         android:layout_height="84dp"
         android:layout_marginTop="36dp"
         android:background="@drawable/border"
-        android:hint="Description"
+        android:hint="@string/desc"
         android:inputType="textMultiLine"
         android:padding="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_tiet"
+        app:layout_constraintTop_toBottomOf="@+id/title_edit"
         app:layout_constraintVertical_bias="0.0" />
 
     <RadioGroup
@@ -53,32 +53,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descripton">
+        app:layout_constraintTop_toBottomOf="@+id/title_desc_edit">
 
         <RadioButton
-            android:id="@+id/a_priority"
+            android:id="@+id/a_priority_create"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:checked="true"
             android:padding="10dp"
-            android:text="A" />
+            android:text="A"
+            android:onClick="onRadioButtonClickedCreate"/>
 
         <RadioButton
-            android:id="@+id/b_priority"
+            android:id="@+id/b_priority_create"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:onClick="onRadioButtonClicked"
+            android:onClick="onRadioButtonClickedCreate"
             android:padding="10dp"
             android:text="B" />
 
         <RadioButton
-            android:id="@+id/c_priority"
+            android:id="@+id/c_priority_create"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:onClick="onRadioButtonClicked"
+            android:onClick="onRadioButtonClickedCreate"
             android:padding="10dp"
             android:text="C" />
 
@@ -91,23 +92,23 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="76dp"
         android:layout_marginBottom="18dp"
-        android:text="Select a priority level:"
+        android:text="@string/priority"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/classes_rg"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descripton"
+        app:layout_constraintTop_toBottomOf="@+id/title_desc_edit"
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/button_add_note"
-        android:layout_width="148dp"
-        android:layout_height="50dp"
-        android:text="Add note"
+        android:id="@+id/button_edit_note"
+        android:layout_width="154dp"
+        android:layout_height="64dp"
+        android:text="@string/add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.942" />
+        app:layout_constraintVertical_bias="0.976" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Semko_Denys</string>
+    <string name="notes_title">Notes :)</string>
+    <string name="title">Title</string>
+    <string name="desc">Description</string>
+    <string name="priority">Select a priority level:</string>
+    <string name="add">Add note</string>
+    <string name="filtr">Filter by importance</string>
+    <string name="search">By description</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="edit_title">Edit note</string>
 </resources>
