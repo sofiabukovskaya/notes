@@ -6,12 +6,18 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Note implements Serializable {
+    private int noteId;
     private String title;
     private String description;
     private String time;
     private String importance;
+    private String icon;
 
-    public Note(String title, String description, String time, String importance, String icon) {
+    public Note() {
+
+    }
+    public Note(int noteId, String title, String description, String time, String importance, String icon) {
+        this.noteId = noteId;
         this.title = title;
         this.description = description;
         this.time = time;
@@ -60,7 +66,14 @@ public class Note implements Serializable {
         this.icon = icon;
     }
 
-    private String icon;
+    public int getNoteId() {
+        return noteId;
+    }
+
+    public void setNoteId(int noteId) {
+        this.noteId = noteId;
+    }
+
 
 
 
