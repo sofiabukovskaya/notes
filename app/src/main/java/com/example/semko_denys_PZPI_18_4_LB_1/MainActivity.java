@@ -25,6 +25,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
+import com.example.semko_denys_PZPI_18_4_LB_1.db.DatabaseHelper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -49,13 +50,11 @@ public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    DatabaseHelper db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        sharedPreferences = this.getSharedPreferences("com.example.semko_pzpi_18_4_LB_1", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
 
         titleNote = findViewById(R.id.textView);
         descriptionNote = findViewById(R.id.textView3);
@@ -65,7 +64,11 @@ public class MainActivity extends AppCompatActivity {
 
         noteList = new ArrayList<>();
 
-        getDataFromSharedPref();
+       db = new DatabaseHelper(this);
+
+        List<Note> list=  db.getAllNotes();
+        this.noteList.addAll(list);
+
 
         notesListView = findViewById(R.id.notes_list);
         notesListView.setHasFixedSize(true);
@@ -100,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                adapter.getFilter().filter(s);
+                searchNotesByDescription(s);
                 return false;
             }
         });
@@ -108,19 +111,22 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void getDataFromSharedPref() {
-        String serializedObject = sharedPreferences.getString("com.example.semko_pzpi_18_4_LB_1", null);
-        if (serializedObject != null) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Note>>(){}.getType();
-            noteList = gson.fromJson(serializedObject, type);
+    private void searchNotesByDescription(String keyword) {
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        ArrayList<Note> notes = databaseHelper.search(keyword);
+        if (notes != null) {
+            notesListView.setAdapter(new NotesAdapter(this, notes, new NotesAdapter.LongClickByItemListener() {
+                @Override
+                public void onLongClick(View itemView, int position) {
+                    itemView.setOnCreateContextMenuListener(new ContextMenuRecyclerView(position));
+                }
+            }));
         }
     }
 
     public void openEditActivity(Note note, int position){
         Intent intent = new Intent(this, NoteEdit.class);
         intent.putExtra("note", note);
-        intent.putExtra("arrayList", noteList);
         intent.putExtra("index", position);
         startActivity(intent);
     }
@@ -136,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_filter_a:
                 if (item.isChecked()) {
                     item.setChecked(false);
-                    getDataFromSharedPref();
                     adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
                         @Override
                         public void onLongClick(View itemView, int position) {
@@ -152,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_filter_b:
                 if (item.isChecked()) {
                     item.setChecked(false);
-                    getDataFromSharedPref();
                     adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
                         @Override
                         public void onLongClick(View itemView, int position) {
@@ -168,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_filter_c:
                 if (item.isChecked()) {
                     item.setChecked(false);
-                    getDataFromSharedPref();
                     adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
                         @Override
                         public void onLongClick(View itemView, int position) {
@@ -188,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
     public class ContextMenuRecyclerView implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         private int position;
-
         ContextMenuRecyclerView(int position) {
             this.position = position;
         }
@@ -209,10 +211,11 @@ public class MainActivity extends AppCompatActivity {
                     openEditActivity(noteList.get(position), position);
                     break;
                 case R.id.action_remove:
-                    adapter.removeNote(position, editor);
+                    adapter.removeNote(position, db);
                     break;
             }
             return false;
         }
     }
+
 }

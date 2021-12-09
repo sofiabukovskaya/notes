@@ -51,6 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_DESCRIPTION, note.getDescription());
         values.put(COL_TIME, note.getTime());
         values.put(COL_IMPORTANCE, note.getImportance());
+        values.put(COL_ICON, note.getIcon());
 
         db.insert(TABLE_NAME, null, values);
 
@@ -85,6 +86,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 note.setNoteId(Integer.parseInt(cursor.getString(0)));
                 note.setTitle(cursor.getString(1));
                 note.setDescription(cursor.getString(2));
+                note.setTime(cursor.getString(3));
+                note.setImportance(cursor.getString(4));
+                note.setIcon(cursor.getString(5));
 
                 noteList.add(note);
             } while (cursor.moveToNext());
@@ -92,25 +96,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return noteList;
     }
 
-    public int updateNote(Note note) {
+    public ArrayList<Note> search(String keyword) {
+        ArrayList<Note> notes = new ArrayList<Note>();
+
+            SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME + " where " + COL_DESCRIPTION + " like ?", new String[] { "%" + keyword + "%" });
+            if (cursor.moveToFirst()) {
+                do {
+                    Note note = new Note();
+                    note.setNoteId(Integer.parseInt(cursor.getString(0)));
+                    note.setTitle(cursor.getString(1));
+                    note.setDescription(cursor.getString(2));
+                    note.setTime(cursor.getString(3));
+                    note.setImportance(cursor.getString(4));
+                    note.setIcon(cursor.getString(5));
+
+                    notes.add(note);
+                } while (cursor.moveToNext());
+            }
+
+        return notes;
+    }
+
+    public int updateNote(Note note, int index) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(COL_TITLE, note.getTitle());
         values.put(COL_DESCRIPTION, note.getDescription());
-        values.put(COL_ICON, note.getIcon());
+        values.put(COL_TIME, note.getTime());
         values.put(COL_IMPORTANCE, note.getImportance());
+        values.put(COL_ICON, note.getIcon());
 
         return db.update(TABLE_NAME, values, COL_ID + " = ?",
-                new String[]{String.valueOf(note.getNoteId())});
+                new String[]{String.valueOf(index)});
     }
 
-    public void deleteNote(Note note) {
+    public void deleteNote(int index) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, COL_ID + " = ?",
-                new String[] { String.valueOf(note.getNoteId()) });
+                new String[] { String.valueOf(index) });
         db.close();
     }
 }

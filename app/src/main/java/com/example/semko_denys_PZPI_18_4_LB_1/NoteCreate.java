@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
+import com.example.semko_denys_PZPI_18_4_LB_1.db.DatabaseHelper;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class NoteCreate extends AppCompatActivity {
-     List<Note> notes;
+     Note note;
 
      ImageView imageNote;
      EditText textNote;
@@ -42,9 +43,10 @@ public class NoteCreate extends AppCompatActivity {
         descriptionNote = findViewById(R.id.title_desc_edit);
         addNoteButton = findViewById(R.id.button_edit_note);
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.semko_pzpi_18_4_LB_1", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        notes = (ArrayList<Note>)getIntent().getSerializableExtra("arrayList");
+        DatabaseHelper db = new DatabaseHelper(this);
+//        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.semko_pzpi_18_4_LB_1", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        notes = (ArrayList<Note>)getIntent().getSerializableExtra("arrayList");
 
         selectImage();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss ", Locale.ENGLISH);
@@ -55,12 +57,10 @@ public class NoteCreate extends AppCompatActivity {
             public void onClick(View view) {
                 String titleNote = textNote.getText().toString();
                 String descriptionNoteString = descriptionNote.getText().toString();
-                notes.add(new Note(titleNote, descriptionNoteString, currentTime, priority, linkImage));
-                Gson gson = new Gson();
-                String json = gson.toJson(notes);
+                note = new Note(titleNote, descriptionNoteString, currentTime, priority, linkImage);
 
-                editor.putString("com.example.semko_pzpi_18_4_LB_1", json);
-                editor.commit();
+                db.addNote(note);
+
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }

@@ -25,6 +25,14 @@ public class Note implements Serializable {
         this.icon = icon;
     }
 
+    public Note(String titleNote, String descriptionNote, String currentTime, String priority, String linkImage) {
+        this.title = titleNote;
+        this.description = descriptionNote;
+        this.time = currentTime;
+        this.importance = priority;
+        this.icon = linkImage;
+    }
+
 
     public String getTitle() {
         return title;

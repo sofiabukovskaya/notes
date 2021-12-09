@@ -17,13 +17,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
+import com.example.semko_denys_PZPI_18_4_LB_1.db.DatabaseHelper;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> implements Filterable {
+public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
     public interface LongClickByItemListener {
         void onLongClick(View itemView, int position);
     }
@@ -63,37 +64,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         return notesList.size();
     }
 
-    @Override
-    public Filter getFilter() {
-        return notesFilter;
-    }
-
-    private Filter notesFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            List<Note> filteringList = new ArrayList<>();
-            if(charSequence == null || charSequence.length() == 0) {
-                filteringList.addAll(searchNotesList);
-            } else {
-                String filteringPattern = charSequence.toString().toLowerCase().trim();
-                for(Note note : searchNotesList) {
-                        if(note.getDescription().toLowerCase().contains(filteringPattern)) {
-                            filteringList.add(note);
-                        }
-                }
-            }
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteringList;
-            return filterResults;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            notesList.clear();
-            notesList.addAll((List) filterResults.values);
-            notifyDataSetChanged();
-        }
-    };
 
      void filterNotes(String filerImportant) {
          searchNotesList.clear();
@@ -107,13 +77,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void removeNote(int position, SharedPreferences.Editor editor) {
-         editor.clear();
+    public void removeNote(int position, DatabaseHelper databaseHelper) {
+        databaseHelper.deleteNote(position);
         notesList.remove(position);
-        Gson gson = new Gson();
-        String json = gson.toJson(notesList);
-        editor.putString("com.example.semko_pzpi_18_4_LB_1", json);
-        editor.commit();
         notifyItemRemoved(position);
     }
 

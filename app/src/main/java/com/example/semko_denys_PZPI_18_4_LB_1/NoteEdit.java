@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
+import com.example.semko_denys_PZPI_18_4_LB_1.db.DatabaseHelper;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class NoteEdit extends AppCompatActivity {
-    List<Note> notes;
     int index;
     Note note;
 
@@ -43,7 +43,6 @@ public class NoteEdit extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_edit);
         note = (Note) getIntent().getSerializableExtra("note");
-        notes = (ArrayList<Note>)getIntent().getSerializableExtra("arrayList");
         index = getIntent().getIntExtra("index",0);
         newPriority = note.getImportance();
         linkImage = note.getIcon();
@@ -60,8 +59,6 @@ public class NoteEdit extends AppCompatActivity {
         textNote.setText(note.getTitle());
         descriptionNote.setText(note.getDescription());
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.semko_pzpi_18_4_LB_1", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         if(note.getIcon() != null) {
             Picasso.get()
@@ -73,18 +70,13 @@ public class NoteEdit extends AppCompatActivity {
         checkRadioButtonValue(note.getImportance());
         selectImage();
 
-
+        DatabaseHelper db = new DatabaseHelper(this);
         editNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editor.clear();
-                notes.remove(index);
-                notes.add(index, new Note(textNote.getText().toString(),descriptionNote.getText().toString(),note.getTime(),newPriority,linkImage));
-                Gson gson = new Gson();
-                String json = gson.toJson(notes);
+                note = new Note(textNote.getText().toString(), descriptionNote.getText().toString(), note.getTime(), newPriority, linkImage);
 
-                editor.putString("com.example.semko_pzpi_18_4_LB_1", json);
-                editor.commit();
+                db.updateNote(note, index);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
