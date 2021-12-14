@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 
 import androidx.annotation.Nullable;
 
@@ -118,7 +119,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return notes;
     }
 
-    public int updateNote(Note note, int index) {
+    public  ArrayList<Note> filterByImportant(String important) {
+        ArrayList<Note> notes = new ArrayList<Note>();
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME + " where " + COL_IMPORTANCE + " like ?", new String[] { "%" + important + "%" });
+        if (cursor.moveToFirst()) {
+            do {
+                Note note = new Note();
+                note.setNoteId(Integer.parseInt(cursor.getString(0)));
+                note.setTitle(cursor.getString(1));
+                note.setDescription(cursor.getString(2));
+                note.setTime(cursor.getString(3));
+                note.setImportance(cursor.getString(4));
+                note.setIcon(cursor.getString(5));
+
+                notes.add(note);
+            } while (cursor.moveToNext());
+        }
+
+        return  notes;
+    }
+
+    public int updateNote(Note note) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -130,14 +152,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_ICON, note.getIcon());
 
         return db.update(TABLE_NAME, values, COL_ID + " = ?",
-                new String[]{String.valueOf(index)});
+                new String[]{String.valueOf(note.getNoteId())});
     }
 
-    public void deleteNote(int index) {
+    public void deleteNote(Note note) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, COL_ID + " = ?",
-                new String[] { String.valueOf(index) });
+                new String[] { String.valueOf(note.getNoteId()) });
         db.close();
     }
+
 }
+
+

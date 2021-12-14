@@ -1,15 +1,11 @@
 package com.example.semko_denys_PZPI_18_4_LB_1;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
 import com.example.semko_denys_PZPI_18_4_LB_1.db.DatabaseHelper;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -65,20 +60,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
     }
 
 
-     void filterNotes(String filerImportant) {
-         searchNotesList.clear();
-        for (Note note : notesList) {
-            if (note.getImportance().contains(filerImportant)) {
-                searchNotesList.add(note);
-            }
-        }
-        notesList.clear();
-        notesList.addAll(searchNotesList);
-        notifyDataSetChanged();
+     void filterNotes(String filerImportant, DatabaseHelper db) {
+        FilterNotesAsyncTask filterNotesAsyncTask = new FilterNotesAsyncTask(filerImportant, db);
+        filterNotesAsyncTask.execute();
     }
 
     public void removeNote(int position, DatabaseHelper databaseHelper) {
-        databaseHelper.deleteNote(position);
+        Note note = notesList.get(position);
+        databaseHelper.deleteNote(note);
         notesList.remove(position);
         notifyItemRemoved(position);
     }
@@ -136,4 +125,30 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             important.setText(note.getImportance());
         }
     }
+
+    class FilterNotesAsyncTask extends AsyncTask<Void, Void, Void> {
+        String filter;
+        DatabaseHelper db;
+
+        public FilterNotesAsyncTask(String filerImportant, DatabaseHelper db) {
+            this.filter = filerImportant;
+            this.db = db;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            searchNotesList.clear();
+            notesList.clear();
+            searchNotesList.addAll(db.filterByImportant(filter));
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            notesList.addAll(searchNotesList);
+            notifyDataSetChanged();
+        }
+    }
+
 }

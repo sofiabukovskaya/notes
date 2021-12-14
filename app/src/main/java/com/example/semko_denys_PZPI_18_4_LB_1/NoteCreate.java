@@ -44,9 +44,6 @@ public class NoteCreate extends AppCompatActivity {
         addNoteButton = findViewById(R.id.button_edit_note);
 
         DatabaseHelper db = new DatabaseHelper(this);
-//        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.semko_pzpi_18_4_LB_1", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        notes = (ArrayList<Note>)getIntent().getSerializableExtra("arrayList");
 
         selectImage();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss ", Locale.ENGLISH);

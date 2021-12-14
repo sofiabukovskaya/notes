@@ -5,11 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -17,21 +14,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.semko_denys_PZPI_18_4_LB_1.data.Note;
 import com.example.semko_denys_PZPI_18_4_LB_1.db.DatabaseHelper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,9 +37,6 @@ public class MainActivity extends AppCompatActivity {
      ArrayList<Note> noteList;
     NotesAdapter adapter;
 
-
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     DatabaseHelper db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +50,9 @@ public class MainActivity extends AppCompatActivity {
         noteImage = findViewById(R.id.imageView);
 
         noteList = new ArrayList<>();
+        db = new DatabaseHelper(this);
 
-       db = new DatabaseHelper(this);
-
-        List<Note> list=  db.getAllNotes();
-        this.noteList.addAll(list);
+        new LoadDataFromDatabase().execute();
 
 
         notesListView = findViewById(R.id.notes_list);
@@ -124,10 +109,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void openEditActivity(Note note, int position){
+    public void openEditActivity(Note note){
         Intent intent = new Intent(this, NoteEdit.class);
         intent.putExtra("note", note);
-        intent.putExtra("index", position);
         startActivity(intent);
     }
 
@@ -142,46 +126,32 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_filter_a:
                 if (item.isChecked()) {
                     item.setChecked(false);
-                    adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
-                        @Override
-                        public void onLongClick(View itemView, int position) {
-                            itemView.setOnCreateContextMenuListener(new ContextMenuRecyclerView(position));
-                        }
-                    });
-                    notesListView.setAdapter(adapter);
+                    noteList.clear();
+                    new LoadDataFromDatabase().execute();
                 } else {
                     item.setChecked(true);
-                    adapter.filterNotes("A");
+                    adapter.filterNotes("A", db);
                 }
                 break;
             case R.id.action_filter_b:
                 if (item.isChecked()) {
                     item.setChecked(false);
-                    adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
-                        @Override
-                        public void onLongClick(View itemView, int position) {
-                            itemView.setOnCreateContextMenuListener(new ContextMenuRecyclerView(position));
-                        }
-                    });
-                    notesListView.setAdapter(adapter);
+                    noteList.clear();
+                    new LoadDataFromDatabase().execute();
+
                 } else {
                     item.setChecked(true);
-                    adapter.filterNotes("B");
+                    adapter.filterNotes("B", db);
                 }
                 break;
             case R.id.action_filter_c:
                 if (item.isChecked()) {
                     item.setChecked(false);
-                    adapter = new NotesAdapter(this, noteList, new NotesAdapter.LongClickByItemListener() {
-                        @Override
-                        public void onLongClick(View itemView, int position) {
-                            itemView.setOnCreateContextMenuListener(new ContextMenuRecyclerView(position));
-                        }
-                    });
-                    notesListView.setAdapter(adapter);
+                    noteList.clear();
+                    new LoadDataFromDatabase().execute();
                 } else {
                     item.setChecked(true);
-                    adapter.filterNotes("C");
+                    adapter.filterNotes("C", db);
                 }
                 break;
 
@@ -191,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     public class ContextMenuRecyclerView implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         private int position;
+
         ContextMenuRecyclerView(int position) {
             this.position = position;
         }
@@ -208,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    openEditActivity(noteList.get(position), position);
+                    openEditActivity(noteList.get(position));
                     break;
                 case R.id.action_remove:
                     adapter.removeNote(position, db);
@@ -218,4 +189,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    class LoadDataFromDatabase extends AsyncTask<Void, Void, List<Note>> {
+        List<Note> list;
+        @Override
+        protected List<Note> doInBackground(Void... voids) {
+           list=  db.getAllNotes();
+           return  list;
+        }
+
+        @Override
+        protected void onPostExecute(List<Note> notes) {
+            noteList.addAll(list);
+            adapter.notifyDataSetChanged();
+            super.onPostExecute(notes);
+        }
+    }
 }

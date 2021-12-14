@@ -38,12 +38,15 @@ public class NoteEdit extends AppCompatActivity {
 
     String linkImage;
     String newPriority;
+
+    int noteId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_edit);
         note = (Note) getIntent().getSerializableExtra("note");
-        index = getIntent().getIntExtra("index",0);
+        noteId = note.getNoteId();
+
         newPriority = note.getImportance();
         linkImage = note.getIcon();
 
@@ -74,9 +77,9 @@ public class NoteEdit extends AppCompatActivity {
         editNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                note = new Note(textNote.getText().toString(), descriptionNote.getText().toString(), note.getTime(), newPriority, linkImage);
+                note = new Note(noteId, textNote.getText().toString(), descriptionNote.getText().toString(), note.getTime(), newPriority, linkImage);
 
-                db.updateNote(note, index);
+                db.updateNote(note);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
