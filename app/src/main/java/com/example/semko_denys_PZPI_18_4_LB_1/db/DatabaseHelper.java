@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String TAG = "DatabaseHelper";
+    private static final String TABLE_NAME_TEMP = "notes_temp";
+
+
     private static final String TABLE_NAME = "notes_db";
     private static final String COL_ID = "_id";
     private static final String COL_TITLE = "title";
@@ -41,6 +43,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        if (i == 1 && i1 == 2) {
+            sqLiteDatabase.beginTransaction();
+            try {
+                sqLiteDatabase.execSQL(
+                        "CREATE TABLE " + TABLE_NAME_TEMP + "(" +
+                                COL_ID +  " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                COL_TITLE + " TEXT, " +
+                                COL_DESCRIPTION + " TEXT, " +
+                                COL_TIME + " TEXT, " +
+                                COL_IMPORTANCE + " TEXT, " +
+                                COL_ICON + " TEXT " + ")"
+                );
+
+                sqLiteDatabase.execSQL(
+                        "INSERT INTO " + TABLE_NAME_TEMP + " SELECT * FROM " + TABLE_NAME
+                );
+
+                sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+
+
+                sqLiteDatabase.execSQL("CREATE TABLE " + TABLE_NAME + " (" + COL_ID +  " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        COL_TITLE + " TEXT, " +
+                        COL_DESCRIPTION + " TEXT, " +
+                        COL_TIME + " TEXT, " +
+                        COL_IMPORTANCE + " TEXT, " +
+                        COL_ICON + " TEXT " + ")");
+
+                sqLiteDatabase.execSQL(
+                        "INSERT INTO " + TABLE_NAME +
+                                " SELECT * FROM " + TABLE_NAME_TEMP
+                );
+
+                sqLiteDatabase.execSQL(
+                        "DROP TABLE " + TABLE_NAME_TEMP
+                );
+
+                sqLiteDatabase.setTransactionSuccessful();
+            } finally {
+                sqLiteDatabase.endTransaction();
+            }
+        }
+
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
     }
 
